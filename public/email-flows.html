@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="de" data-mode="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>quirion Email Flows</title>
+<meta name="description" content="Email-Aktivierungsflows für drei quirion Nutzertypen – powered by beatvest">
+
+<!-- FOUC prevention -->
+<script>
+(function(){
+  try { var m = localStorage.getItem('qef-mode'); if(m) document.documentElement.setAttribute('data-mode', m); }
+  catch(e){}
+  if(!document.documentElement.getAttribute('data-mode'))
+    document.documentElement.setAttribute('data-mode',
+      window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===== TOKENS ===== */
+[data-mode="light"] {
+  --bg: #faf9f7;
+  --surface: #f0ede8;
+  --surface-2: #e8e4de;
+  --ink: #1a1a1a;
+  --ink-2: #2d2a26;
+  --ink-muted: #6b6457;
+  --ink-faint: #a09488;
+  --border: #ddd9d3;
+  --border-2: #ccc8c2;
+  --accent: #3e2eff;
+  --accent-soft: rgba(62,46,255,0.08);
+  --accent-softer: rgba(62,46,255,0.04);
+  --tag-onboarding-bg: #e8f0fe;
+  --tag-onboarding: #1a56db;
+  --tag-kyc-bg: #fef3c7;
+  --tag-kyc: #92400e;
+  --tag-invested-bg: #d1fae5;
+  --tag-invested: #065f46;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  --lock-bg: rgba(250,249,247,0.92);
+}
+[data-mode="dark"] {
+  --bg: #1a1612;
+  --surface: #252018;
+  --surface-2: #2f2820;
+  --ink: #e8e4df;
+  --ink-2: #d0cbc5;
+  --ink-muted: #9a9389;
+  --ink-faint: #6b6457;
+  --border: #352f27;
+  --border-2: #44392e;
+  --accent: #7b6dff;
+  --accent-soft: rgba(123,109,255,0.12);
+  --accent-softer: rgba(123,109,255,0.06);
+  --tag-onboarding-bg: rgba(30,58,138,0.3);
+  --tag-onboarding: #93c5fd;
+  --tag-kyc-bg: rgba(120,53,15,0.3);
+  --tag-kyc: #fcd34d;
+  --tag-invested-bg: rgba(6,78,59,0.3);
+  --tag-invested: #6ee7b7;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --lock-bg: rgba(26,22,18,0.92);
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  transition: background 0.2s, color 0.2s;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== NAV ===== */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  gap: 16px;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.nav-brand-logo {
+  height: 22px;
+  width: auto;
+  display: block;
+}
+.nav-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border-2);
+  flex-shrink: 0;
+}
+.nav-powered {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+.nav-powered-logo {
+  height: 14px;
+  width: auto;
+  opacity: 0.55;
+  filter: var(--logo-filter, none);
+}
+[data-mode="dark"] .nav-powered-logo { filter: invert(1); }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mode-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.mode-btn:hover { background: var(--surface-2); color: var(--ink); }
+.mode-btn svg { width: 16px; height: 16px; }
+.icon-sun { display: block; }
+.icon-moon { display: none; }
+[data-mode="dark"] .icon-sun { display: none; }
+[data-mode="dark"] .icon-moon { display: block; }
+
+/* ===== HERO ===== */
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 72px 24px 48px;
+}
+.hero-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+.hero-title em { font-style: italic; }
+.hero-lead {
+  font-size: 1.05rem;
+  color: var(--ink-muted);
+  max-width: 540px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.hero-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+.hero-stat strong {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+/* ===== TABS ===== */
+.tabs-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: sticky;
+  top: 56px;
+  z-index: 90;
+  background: var(--bg);
+  padding-top: 16px;
+  padding-bottom: 0;
+}
+.tabs-inner {
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0;
+}
+.tab-btn {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--ink); }
+.tab-btn.active::after { transform: scaleX(1); }
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0 5px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.tab-badge-onboarding { background: var(--tag-onboarding-bg); color: var(--tag-onboarding); }
+.tab-badge-kyc { background: var(--tag-kyc-bg); color: var(--tag-kyc); }
+.tab-badge-invested { background: var(--tag-invested-bg); color: var(--tag-invested); }
+
+/* ===== CONTENT AREA ===== */
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ===== EMAIL FLOW SECTION ===== */
+.flow-section { display: none; }
+.flow-section.active { display: block; }
+
+.flow-header {
+  padding: 40px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+}
+.flow-type-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.flow-type-label.onboarding { color: var(--tag-onboarding); }
+.flow-type-label.kyc { color: var(--tag-kyc); }
+.flow-type-label.invested { color: var(--tag-invested); }
+.flow-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.flow-desc {
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+  line-height: 1.65;
+  max-width: 580px;
+}
+.flow-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.flow-stat {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+}
+.flow-stat strong { color: var(--ink-2); }
+
+/* ===== EMAIL CARDS ===== */
+.email-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.email-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.15s;
+}
+.email-card:hover:not(.locked) { box-shadow: var(--shadow-md); }
+
+.email-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.email-day {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.day-onboarding { background: var(--tag-onboarding-bg); color: var(--tag-onboarding); }
+.day-kyc { background: var(--tag-kyc-bg); color: var(--tag-kyc); }
+.day-invested { background: var(--tag-invested-bg); color: var(--tag-invested); }
+
+.email-subject-line {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+}
+.email-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.email-preheader {
+  padding: 8px 18px 0;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+.email-body {
+  padding: 14px 18px 16px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
+
+.email-footer {
+  padding: 0 18px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.email-footer-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+}
+.copy-btn {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 1px solid var(--border-2);
+  background: var(--bg);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.copy-btn:hover { background: var(--surface-2); color: var(--ink); border-color: var(--accent); }
+.copy-btn.copied { color: var(--tag-invested); border-color: var(--tag-invested-bg); background: var(--tag-invested-bg); }
+.copy-btn svg { width: 13px; height: 13px; }
+
+/* ===== LOCKED CARDS ===== */
+.email-card.locked {
+  position: relative;
+  cursor: default;
+  opacity: 0.9;
+}
+.email-card.locked .email-body {
+  max-height: 80px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+  padding-bottom: 0;
+  pointer-events: none;
+  user-select: none;
+  color: var(--ink-faint);
+}
+.email-card.locked .email-preheader {
+  pointer-events: none;
+  user-select: none;
+}
+.lock-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 18px 20px;
+  text-align: center;
+}
+.lock-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint);
+}
+.lock-icon svg { width: 14px; height: 14px; }
+.lock-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
+
+/* ===== CALLOUT / LEGEND ===== */
+.legend {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 40px;
+}
+.legend-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 14px;
+}
+.legend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ===== DIVIDER ===== */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 48px 0 40px;
+}
+
+/* ===== ATTRIBUTION ===== */
+.attribution {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .hero { padding: 48px 16px 32px; }
+  .tabs-wrapper { padding: 12px 16px 0; }
+  .content { padding: 0 16px 60px; }
+  .tab-btn { padding: 10px 14px; font-size: 0.82rem; }
+  .hero-title { font-size: 1.8rem; }
+  .flow-title { font-size: 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <a href="https://quirion.beatvest.com" class="nav-brand" target="_blank">
+    <!-- quirion wordmark inline SVG (simplified) -->
+    <svg height="22" viewBox="0 0 100 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-brand-logo" aria-label="quirion">
+      <text y="18" font-family="'Source Sans 3', system-ui, sans-serif" font-size="18" font-weight="600" fill="currentColor" letter-spacing="-0.5">quirion</text>
+    </svg>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-powered">
+    powered by
+    <svg height="14" viewBox="0 0 258 43" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-powered-logo" aria-label="beatvest">
+      <path d="M73.66 42.97C70.32 42.97 64.82 41.92 62.83 40.98V5.75L58.97 2.59V1.36L66.64.6C68.28.48 69.22.42 69.57.42c.76 0 .99.35.99 1.17V19.79c2.46-1.99 5.27-4.45 9.13-4.45 6.79 0 9.83 5.09 9.83 12.11 0 7.96-4.62 15.51-15.86 15.52zm2.98-2.17c2.98 0 4.74-4.16 4.74-10.71 0-6.55-1.93-9.89-6.85-9.89-1.46 0-2.58.23-3.98.82v15.57c1.46 2.69 3.75 4.21 6.09 4.21z" fill="currentColor"/>
+      <path d="M40.36 36.65l.23 4.05c.01.18-.13.33-.31.33H.18C.08 41.03 0 40.95 0 40.85V.77C0 .59.15.45.33.46L4.38.68c.16 0 .29.15.29.31V28.84c0 .32.42.43.58.16L18.85 5.43c.09-.15.28-.2.43-.11l3.47 2.11c.14.09.19.27.11.42L9.31 31.32c-.16.28.15.58.42.42l23.46-13.55c.15-.08.33-.04.42.11l2.1 3.47c.09.15.04.34-.11.43L12.06 35.79c-.28.16-.16.58.16.58H40.03c.16 0 .3.13.31.29l.02-.01z" fill="currentColor"/>
+    </svg>
+  </div>
+  <div class="nav-right">
+    <button class="mode-btn" id="modeToggle" aria-label="Light/Dark wechseln">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-kicker">Email Aktivierungsflows</div>
+  <h1 class="hero-title">Drei User-Typen.<br><em>Zehn Emails. Ein Ziel.</em></h1>
+  <p class="hero-lead">Email-Cadences fur die drei wichtigsten quirion Nutzertypen. Je 10 Emails uber 90 Tage, ausgerichtet auf den spezifischen Status und die Barrieren jedes Typs.</p>
+  <div class="hero-meta">
+    <div class="hero-stat"><strong>3</strong> Nutzertypen</div>
+    <div class="hero-stat"><strong>10</strong> Emails je Typ</div>
+    <div class="hero-stat"><strong>10-Tage</strong> Kadenz</div>
+    <div class="hero-stat">Kurs-CTA: <strong>quirion.beatvest.com</strong></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-type="onboarding">
+      Im Onboarding
+      <span class="tab-badge tab-badge-onboarding">10</span>
+    </button>
+    <button class="tab-btn" data-type="kyc">
+      Portfolio gesehen / kein KYC
+      <span class="tab-badge tab-badge-kyc">10</span>
+    </button>
+    <button class="tab-btn" data-type="invested">
+      KYC erledigt / wenig investiert
+      <span class="tab-badge tab-badge-invested">10</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ===== TYPE 1: IM ONBOARDING ===== -->
+  <section class="flow-section active" id="flow-onboarding">
+    <div class="flow-header">
+      <div class="flow-type-label onboarding">Nutzertyp 01 / Im Onboarding</div>
+      <h2 class="flow-title">Vom Interessierten zum ersten Investment</h2>
+      <p class="flow-desc">Diese Nutzer haben das Onboarding gestartet, aber noch kein erstes Investment getatigt. Ziel: Verstandnis aufbauen, Vertrauen gewinnen, erste Einzahlung auslosien.</p>
+      <div class="flow-stats">
+        <div class="flow-stat">Trigger: <strong>Onboarding gestartet, kein Deposit</strong></div>
+        <div class="flow-stat">Ziel: <strong>Erste Einzahlung</strong></div>
+        <div class="flow-stat">Ton: <strong>Edukativ, empathisch, klar</strong></div>
+      </div>
+    </div>
+
+    <div class="email-list">
+
+      <!-- EMAIL 1 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 1</span>
+          <span class="email-subject-line">Dein erster Schritt zu echtem Vermogensaufbau</span>
+          <span class="email-num">1 / 10</span>
+        </div>
+        <div class="email-preheader">Was dich in den nachsten Wochen erwartet - und warum es wichtig ist</div>
+        <div class="email-body" id="email-ob-1">Hallo [Vorname],
+
+schon, dass du dabei bist.
+
+Wir machen das kurz und ehrlich: Die meisten Menschen in Deutschland sparen brav - und verlieren dabei trotzdem Geld. Weil sie vergessen, was Inflation mit Ersparnissen macht.
+
+Deswegen haben wir den quirion Kurs gebaut. In wenigen Stunden lernst du, was dein Geld wirklich tut - und was es tun konnte.
+
+Was dich erwartet:
+- Modul 1: Warum Inflation dein Erspartes heimlich auffrisst
+- Modul 2: Was der Zinseszinseffekt fur dich bedeutet
+- Modul 3: Risiko, Rendite und warum du keine Angst haben musst
+- Modul 4: ETFs einfach erklart - das wichtigste Werkzeug
+- Modul 5: Kosten, die du nie siehst - aber immer zahlst
+- ... und vier weitere Module
+
+Das erste Modul dauert weniger als 10 Minuten.
+
+Starte jetzt: quirion.beatvest.com
+
+Viele Grusse,
+Dein quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Betreff-Variante A/B empfohlen</span>
+          <button class="copy-btn" data-email="email-ob-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 2 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 11</span>
+          <span class="email-subject-line">Warum dein Sparkonto dich heimlich armer macht</span>
+          <span class="email-num">2 / 10</span>
+        </div>
+        <div class="email-preheader">Die Zahlen, die dich zum Handeln bringen</div>
+        <div class="email-body" id="email-ob-2">Hallo [Vorname],
+
+eine Frage: Wie viel Geld hast du gerade auf dem Sparkonto?
+
+Sagen wir, es sind 10.000 Euro.
+
+Bei 2,5% Inflation verlierst du in 10 Jahren 2.194 Euro an Kaufkraft. In 20 Jahren sind es schon 3.950 Euro. In 30 Jahren? Fast 5.400 Euro - ohne einen Cent auszugeben.
+
+Das nennt sich Kaufkraftverlust. Er passiert still und leise, wahrend du schlafst.
+
+Das Sparkonto zeigt dir die Zahl. Es zeigt dir nicht, was diese Zahl in Zukunft wert ist.
+
+Im quirion Kurs kannst du das selbst ausrechnen - mit einem interaktiven Inflationsrechner, der dir zeigt, was deine Ersparnisse in 10, 20 und 30 Jahren wirklich wert sind.
+
+Es ist unbehaglich zu sehen. Aber es ist wichtig.
+
+Modul 1 starten: quirion.beatvest.com
+
+Bis bald,
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Personalisierung: Kontostand aus Onboarding-Daten</span>
+          <button class="copy-btn" data-email="email-ob-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 3 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 21</span>
+          <span class="email-subject-line">Was ist eigentlich ein ETF? (Erklart ohne Bankendeutsch)</span>
+          <span class="email-num">3 / 10</span>
+        </div>
+        <div class="email-preheader">Endlich eine ehrliche Erklarung - ohne unnotigeKomplexitat</div>
+        <div class="email-body" id="email-ob-3">Hallo [Vorname],
+
+ETF steht fur Exchange Traded Fund. Auf Deutsch: borsengekaufter Fonds.
+
+Aber was bedeutet das wirklich?
+
+Stell dir vor, du kaufst nicht eine Aktie von einem Unternehmen, sondern einen kleinen Anteil von hunderten Unternehmen gleichzeitig. Genau das ist ein ETF.
+
+Beispiel: Ein ETF auf den MSCI World halt Anteile an uber 1.500 Unternehmen aus 23 Landern. Apple, Microsoft, LVMH, Samsung - alles dabei.
+
+Das Geniale daran:
+- Keine aktiven Manager, die falsch liegen konnen
+- Geringe Kosten (meist 0,1-0,3% pro Jahr)
+- Automatische Diversifikation uber hunderte Unternehmen
+- Historisch langfristig eine der besten Anlageformen
+
+Bei quirion setzen wir ausschliesslich auf ETFs. Der Kurs erklart dir genau, welche - und warum dieser Ansatz funktioniert.
+
+Weiter im Kurs: quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Empfehlung: Verlinkung direkt auf Modul "Was ist ein ETF?"</span>
+          <button class="copy-btn" data-email="email-ob-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 4 (LOCKED) -->
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 31</span>
+          <span class="email-subject-line">Dein personlicher ETF-Mix - nicht jeder braucht das Gleiche</span>
+          <span class="email-num">4 / 10</span>
+        </div>
+        <div class="email-preheader">Warum es auf die Verteilung ankommt, nicht auf einzelne ETFs</div>
+        <div class="email-body">Hallo [Vorname],
+
+du hast jetzt verstanden, was ETFs sind. Jetzt kommt die interessante Frage: Welche ETFs passen zu dir?
+
+Nicht jeder Mensch braucht den gleichen Mix. Wer...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 4-10 auf Anfrage verfugbar</div>
+        </div>
+      </div>
+
+      <!-- EMAILS 5-10 (LOCKED) -->
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 41</span>
+          <span class="email-subject-line">Der Zinseszinseffekt: Das achte Weltwunder</span>
+          <span class="email-num">5 / 10</span>
+        </div>
+        <div class="email-preheader">Warum fruher starten wichtiger ist als wie viel du investierst</div>
+        <div class="email-body">Hallo [Vorname],
+
+Albert Einstein soll gesagt haben, der Zinseszins sei das achte Weltwunder. Ob er das wirklich sagte, wissen wir nicht. Aber...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 5 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 51</span>
+          <span class="email-subject-line">Wie viel solltest du investieren? (Die ehrliche Antwort)</span>
+          <span class="email-num">6 / 10</span>
+        </div>
+        <div class="email-preheader">Notgroschen, Sparrate, 50/30/20 - ein Rechner zeigt, was passt</div>
+        <div class="email-body">Hallo [Vorname],
+
+"Wie viel soll ich investieren?" ist die Frage, die fast jeder stellt - und fur die es keine universelle Antwort gibt...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 6 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 61</span>
+          <span class="email-subject-line">Was andere in deinem Alter investieren (Zahlen aus Deutschland)</span>
+          <span class="email-num">7 / 10</span>
+        </div>
+        <div class="email-preheader">Du bist nicht allein - und diese Zahlen uberraschen viele</div>
+        <div class="email-body">Hallo [Vorname],
+
+laut Bundesbank legt der durchschnittliche deutsche Haushalt knapp 200 Euro pro Monat am Kapitalmarkt an...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 7 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 71</span>
+          <span class="email-subject-line">Der Gleitpfad: Wie dein Portfolio automatisch sicherer wird</span>
+          <span class="email-num">8 / 10</span>
+        </div>
+        <div class="email-preheader">Je naher das Ziel, desto weniger Risiko - automatisch</div>
+        <div class="email-body">Hallo [Vorname],
+
+stell dir vor, dein Portfolio passt sich automatisch an - ganz ohne, dass du etwas tun musst...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 8 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 81</span>
+          <span class="email-subject-line">Warum dein Anlageziel alles verandert</span>
+          <span class="email-num">9 / 10</span>
+        </div>
+        <div class="email-preheader">Rente, Eigenheim, Freiheit - dein Ziel bestimmt deine Strategie</div>
+        <div class="email-body">Hallo [Vorname],
+
+"Ich mochte fur die Rente vorsorgen" klingt abstrakt. "Ich mochte mit 60 finanzielle Unabhangigkeit erreichen" ist ein Ziel...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 9 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-onboarding">Tag 91</span>
+          <span class="email-subject-line">Es ist Zeit. Drei Minuten bis zum Start.</span>
+          <span class="email-num">10 / 10</span>
+        </div>
+        <div class="email-preheader">Du weisst jetzt, was du wissen musst. Jetzt handeln.</div>
+        <div class="email-body">Hallo [Vorname],
+
+in den letzten 90 Tagen haben wir dir gezeigt, wie Inflation wirkt, was ETFs sind, warum Zinseszins so machtig ist...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 10 von 10</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== TYPE 2: PORTFOLIO GESEHEN / KEIN KYC ===== -->
+  <section class="flow-section" id="flow-kyc">
+    <div class="flow-header">
+      <div class="flow-type-label kyc">Nutzertyp 02 / Portfolio gesehen, kein KYC</div>
+      <h2 class="flow-title">Vom passiven Zuschauer zum aktiven Investor</h2>
+      <p class="flow-desc">Diese Nutzer haben ihr mogliches Portfolio gesehen, aber den KYC-Prozess (Identifikation) nicht abgeschlossen. Die Barriere ist oft Unsicherheit oder Aufschieberitis. Ziel: KYC-Abschluss.</p>
+      <div class="flow-stats">
+        <div class="flow-stat">Trigger: <strong>Portfolio-Ansicht, kein KYC</strong></div>
+        <div class="flow-stat">Ziel: <strong>KYC abschliessen</strong></div>
+        <div class="flow-stat">Ton: <strong>Direkt, ehrlich, kostenorientiert</strong></div>
+      </div>
+    </div>
+
+    <div class="email-list">
+
+      <!-- EMAIL 1 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 1</span>
+          <span class="email-subject-line">Du weisst jetzt, was dein Geld erreichen konnte</span>
+          <span class="email-num">1 / 10</span>
+        </div>
+        <div class="email-preheader">Der nachste Schritt ist einfacher als du denkst</div>
+        <div class="email-body" id="email-kyc-1">Hallo [Vorname],
+
+du hast gesehen, wie dein Portfolio aussehen konnte.
+
+Das ist mehr als ein Klick - das ist Absicht. Und Absicht zahlt.
+
+Jetzt stehst du vor der eigentlichen Entscheidung: Machst du weiter? Oder wartest du?
+
+Wir mochten dir dabei helfen, diese Entscheidung mit Klarheit zu treffen - nicht mit Druck. Deswegen haben wir den quirion Kurs gebaut.
+
+In wenigen Modulen lernst du:
+- Wie das Portfolio zusammengestellt wurde und warum
+- Was ETFs sind und warum sie fur langfristigen Aufbau geeignet sind
+- Wie das Risikomanagement bei quirion funktioniert
+- Ob dieses Modell zu deiner Situation passt
+
+Keine Verkaufsargumente. Nur Klarheit.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Portfolio-Screenshot aus Session personalisierbar</span>
+          <button class="copy-btn" data-email="email-kyc-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 2 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 11</span>
+          <span class="email-subject-line">Eine direkte Frage: Was halt dich zuruck?</span>
+          <span class="email-num">2 / 10</span>
+        </div>
+        <div class="email-preheader">Die drei haufigsten Grunde - und ehrliche Antworten darauf</div>
+        <div class="email-body" id="email-kyc-2">Hallo [Vorname],
+
+lass mich direkt sein.
+
+Du hast dein Portfolio gesehen - und noch nicht angefangen. Das ist okay. Aber ich mochte verstehen, warum.
+
+Die drei haufigsten Grunde, die wir horen:
+
+1. "Ich verstehe noch nicht ganz, wie das funktioniert."
+Dafur haben wir den quirion Kurs. Er erklart alles von ETFs bis zum Gleitpfad - ohne Bankenjargon. quirion.beatvest.com
+
+2. "Ich warte auf den richtigen Zeitpunkt."
+Den gibt es nicht. Der beste Zeitpunkt war gestern. Der zweitbeste ist heute. (Das ist keine Phrase - das ist Mathematik des Zinseszinseffekts.)
+
+3. "Ich bin nicht sicher, ob ich das Geld gerade entbehren kann."
+Das Modul "Wie viel solltest du investieren?" hilft dir, das konkret auszurechnen - inklusive Notgroschen.
+
+Welcher Grund trifft zu? Fang dort an.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Hoch-Engagement Email - empfohlen fur A/B Split nach Klickverhalten</span>
+          <button class="copy-btn" data-email="email-kyc-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 3 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 21</span>
+          <span class="email-subject-line">Was jeder Monat Warten konkret kostet</span>
+          <span class="email-num">3 / 10</span>
+        </div>
+        <div class="email-preheader">Keine Meinung - nur Zahlen</div>
+        <div class="email-body" id="email-kyc-3">Hallo [Vorname],
+
+lass die Zahlen fur sich sprechen.
+
+Szenario A: Du startest heute mit 200 Euro pro Monat.
+Szenario B: Du wartest 12 Monate, dann startest du mit 200 Euro pro Monat.
+
+Nach 30 Jahren bei 7% angenommener Rendite:
+- Szenario A: ca. 227.000 Euro
+- Szenario B: ca. 211.000 Euro
+
+Differenz: 16.000 Euro - weil du 12 Monate gewartet hast.
+
+Und das bei gleichem monatlichem Einsatz.
+
+Jeder Monat, den du wartest, hat einen konkreten Preis. Das ist kein Verkaufsargument. Das ist der Zinseszinseffekt.
+
+Der quirion Kurs hat dazu einen interaktiven Rechner. Probier deine eigenen Zahlen aus - und entscheid dann.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Rechner im Kurs: Modul "Zinseszins"</span>
+          <button class="copy-btn" data-email="email-kyc-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAILS 4-10 (LOCKED) -->
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 31</span>
+          <span class="email-subject-line">KYC in 5 Minuten - das erwartet dich</span>
+          <span class="email-num">4 / 10</span>
+        </div>
+        <div class="email-preheader">Eine Schritt-fur-Schritt Erklarung des Identifikationsprozesses</div>
+        <div class="email-body">Hallo [Vorname],
+
+viele glauben, der Identifikationsprozess sei kompliziert. Er ist es nicht. Hier ist, was dich erwartet...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 4-10 auf Anfrage verfugbar</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 41</span>
+          <span class="email-subject-line">Der ETF-Mix, den quirion fur dich zusammengestellt hat</span>
+          <span class="email-num">5 / 10</span>
+        </div>
+        <div class="email-preheader">Warum genau diese Gewichtung - erklart ohne Bankenjargon</div>
+        <div class="email-body">Hallo [Vorname],
+
+im quirion-Portfolio steckt mehr Uberlegung als es auf den ersten Blick scheint...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 5 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 51</span>
+          <span class="email-subject-line">Den richtigen Zeitpunkt abwarten? Hier ist die Wahrheit.</span>
+          <span class="email-num">6 / 10</span>
+        </div>
+        <div class="email-preheader">Warum Market-Timing nicht funktioniert - und was stattdessen zahlt</div>
+        <div class="email-body">Hallo [Vorname],
+
+"Ich warte, bis die Markte runtergekommen sind." Dieser Satz klingt vernunftig. Er ist es nicht...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 6 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 61</span>
+          <span class="email-subject-line">200 Euro im Monat vs. Tagesgeld - ein ehrlicher Vergleich</span>
+          <span class="email-num">7 / 10</span>
+        </div>
+        <div class="email-preheader">Zahlen nach 10, 20 und 30 Jahren - nebeneinander</div>
+        <div class="email-body">Hallo [Vorname],
+
+du hast vielleicht Tagesgeld oder ein Festgeldkonto. Das ist nicht schlecht. Aber lass uns die Zahlen vergleichen...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 7 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 71</span>
+          <span class="email-subject-line">Was passiert, wenn du noch 5 Jahre wartest</span>
+          <span class="email-num">8 / 10</span>
+        </div>
+        <div class="email-preheader">Inflation + entgangene Rendite - zusammen gerechnet</div>
+        <div class="email-body">Hallo [Vorname],
+
+5 Jahre klingen nicht nach viel. Bei 2,5% Inflation und entgangener Rendite ist die Summe...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 8 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 81</span>
+          <span class="email-subject-line">Einmal einrichten - dann lauft es allein</span>
+          <span class="email-num">9 / 10</span>
+        </div>
+        <div class="email-preheader">Warum Automatisierung der grosste Vorteil langfristiger Investoren ist</div>
+        <div class="email-body">Hallo [Vorname],
+
+das Schonste an einem gut aufgestellten Portfolio ist: Du musst nichts mehr tun...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 9 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-kyc">Tag 91</span>
+          <span class="email-subject-line">Dein Portfolio wartet. Was halt dich noch?</span>
+          <span class="email-num">10 / 10</span>
+        </div>
+        <div class="email-preheader">Die letzte ehrliche Frage - und eine direkte Einladung</div>
+        <div class="email-body">Hallo [Vorname],
+
+das ist meine letzte Email in diesem Flow. Ich mochte direkt sein...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 10 von 10</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== TYPE 3: KYC ERLEDIGT / WENIG INVESTIERT ===== -->
+  <section class="flow-section" id="flow-invested">
+    <div class="flow-header">
+      <div class="flow-type-label invested">Nutzertyp 03 / KYC erledigt, wenig investiert</div>
+      <h2 class="flow-title">Vom Starter zum konsequenten Langzeitinvestor</h2>
+      <p class="flow-desc">Diese Nutzer haben den KYC abgeschlossen und investieren, aber der Betrag bleibt klein oder die Sparrate wird nicht erhoht. Ziel: Sparrate steigern, Commitment verstarken.</p>
+      <div class="flow-stats">
+        <div class="flow-stat">Trigger: <strong>KYC done, monatl. Rate &lt; 100 Euro</strong></div>
+        <div class="flow-stat">Ziel: <strong>Sparrate erhohen</strong></div>
+        <div class="flow-stat">Ton: <strong>Gratulierend, motivierend, konkret</strong></div>
+      </div>
+    </div>
+
+    <div class="email-list">
+
+      <!-- EMAIL 1 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 1</span>
+          <span class="email-subject-line">Gluckwunsch. Ernsthaft.</span>
+          <span class="email-num">1 / 10</span>
+        </div>
+        <div class="email-preheader">Du hast getan, was die meisten nie tun</div>
+        <div class="email-body" id="email-inv-1">Hallo [Vorname],
+
+du hast angefangen. Wirklich angefangen.
+
+Weisst du, was die meisten Menschen tun, die uber Investieren nachdenken? Sie lesen Artikel. Sie schauen YouTube-Videos. Sie planen, "bald" anzufangen.
+
+Du hast angefangen.
+
+Das unterscheidet dich von der Mehrheit. Laut Bundesbank investieren nur 16% der Deutschen regelmasig am Kapitalmarkt. Du gehorst jetzt dazu.
+
+Jetzt geht es darum, das Beste daraus zu machen.
+
+Im quirion Kurs lernst du, wie der Zinseszinseffekt fur dich arbeitet - und warum Regelmasigkeit wichtiger ist als der perfekte Einstiegszeitpunkt.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Trigger 24h nach erstem Deposit</span>
+          <button class="copy-btn" data-email="email-inv-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 2 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 11</span>
+          <span class="email-subject-line">Warum jetzt wichtiger ist als wie viel</span>
+          <span class="email-num">2 / 10</span>
+        </div>
+        <div class="email-preheader">Das achte Weltwunder - und warum es schon fur dich arbeitet</div>
+        <div class="email-body" id="email-inv-2">Hallo [Vorname],
+
+eine einfache Frage: Was passiert mit 100 Euro, die du heute investierst?
+
+Bei 7% Rendite nach 30 Jahren: ca. 761 Euro.
+
+Und mit 100 Euro, die du in 10 Jahren investierst?
+Nach dann noch 20 Jahren Laufzeit: ca. 387 Euro.
+
+Gleicher Betrag. Fast doppelter Unterschied. Nur wegen dem Zeitpunkt.
+
+Das ist der Zinseszinseffekt. Und er zeigt: Fruh starten schlagt viel investieren.
+
+Dein jetziger Start - auch wenn der Betrag noch klein ist - ist wertvoller als ein grosserer Betrag spater.
+
+Schau dir das Modul "Zinseszins" im quirion Kurs an. Der interaktive Rechner macht es greifbar.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">Empfehlung: Aktuellen Sparplan-Betrag aus Kundendaten einsetzen</span>
+          <button class="copy-btn" data-email="email-inv-2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAIL 3 -->
+      <div class="email-card">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 21</span>
+          <span class="email-subject-line">Was 50 Euro mehr pro Monat langfristig bedeuten</span>
+          <span class="email-num">3 / 10</span>
+        </div>
+        <div class="email-preheader">Ein konkreter Rechner - und eine Regel, die vieles vereinfacht</div>
+        <div class="email-body" id="email-inv-3">Hallo [Vorname],
+
+stell dir vor, du erhoht deine monatliche Sparrate um 50 Euro.
+
+50 Euro - das sind zwei Restaurantbesuche. Oder eine Uber-Fahrt. Oder vier Kaffeespezialitaten.
+
+Was diese 50 Euro bei 7% Rendite in 30 Jahren bedeuten: ca. 56.800 Euro mehr im Portfolio.
+
+Fur sowas gibt es die 50/30/20-Regel: 50% des Einkommens fur Lebenshaltung, 30% fur personliche Wunsche, 20% fur Sparen und Investieren.
+
+Fur die meisten Menschen ist der Invest-Anteil noch zu klein. Das Modul "Wie viel solltest du investieren?" im quirion Kurs hat einen konkreten Rechner dafur.
+
+Schau mal rein.
+
+quirion.beatvest.com
+
+Das quirion-Team</div>
+        <div class="email-footer">
+          <span class="email-footer-meta">CTA: Direkt auf Sparplan-Anpassung im quirion-Dashboard linken</span>
+          <button class="copy-btn" data-email="email-inv-3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Kopieren
+          </button>
+        </div>
+      </div>
+
+      <!-- EMAILS 4-10 (LOCKED) -->
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 31</span>
+          <span class="email-subject-line">Die 50/30/20-Regel konkret auf dein Einkommen angewendet</span>
+          <span class="email-num">4 / 10</span>
+        </div>
+        <div class="email-preheader">Mit Rechner: Was dein optimaler Investitionsbetrag ware</div>
+        <div class="email-body">Hallo [Vorname],
+
+im letzten Email haben wir kurz die 50/30/20-Regel erwahnt. Heute gehen wir tiefer...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 4-10 auf Anfrage verfugbar</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 41</span>
+          <span class="email-subject-line">Dein Gleitpfad: Wie quirion dein Geld automatisch schutzt</span>
+          <span class="email-num">5 / 10</span>
+        </div>
+        <div class="email-preheader">Was im Hintergrund passiert - ohne dass du etwas tun musst</div>
+        <div class="email-body">Hallo [Vorname],
+
+wahrend du dich um dein Leben kummerst, passiert im Hintergrund etwas Wichtiges...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 5 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 51</span>
+          <span class="email-subject-line">Was andere in deiner Situation investieren</span>
+          <span class="email-num">6 / 10</span>
+        </div>
+        <div class="email-preheader">Deutschlandweite Zahlen - und was du daraus ableiten kannst</div>
+        <div class="email-body">Hallo [Vorname],
+
+der durchschnittliche Bundesbank-Sparer legt knapp 200 Euro pro Monat am Kapitalmarkt an...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 6 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 61</span>
+          <span class="email-subject-line">Dein Anlageziel konkreter machen - fur mehr Motivation</span>
+          <span class="email-num">7 / 10</span>
+        </div>
+        <div class="email-preheader">Von "fur die Rente sparen" zu einem echten Bild in deinem Kopf</div>
+        <div class="email-body">Hallo [Vorname],
+
+"Ich spare fur die Rente" ist gut. Aber es ist zu abstrakt, um dauerhaft motivierend zu sein...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 7 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 71</span>
+          <span class="email-subject-line">Die drei haufigsten Fehler von Kleininvestoren</span>
+          <span class="email-num">8 / 10</span>
+        </div>
+        <div class="email-preheader">Und wie du sicherstellst, dass du keinen davon machst</div>
+        <div class="email-body">Hallo [Vorname],
+
+es gibt drei Fehler, die viele Investoren in der Anfangsphase machen. Alle drei sind vermeidbar...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 8 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 81</span>
+          <span class="email-subject-line">Automatisch mehr sparen: Eine kleine Anpassung, grosse Wirkung</span>
+          <span class="email-num">9 / 10</span>
+        </div>
+        <div class="email-preheader">Wie du Gehaltserhoung und Boni intelligent investierst</div>
+        <div class="email-body">Hallo [Vorname],
+
+die einfachste Art, mehr zu investieren, ist die, bei der du es kaum merkst...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 9 von 10</div>
+        </div>
+      </div>
+
+      <div class="email-card locked">
+        <div class="email-header">
+          <span class="email-day day-invested">Tag 91</span>
+          <span class="email-subject-line">Der nachste Level wartet auf dich</span>
+          <span class="email-num">10 / 10</span>
+        </div>
+        <div class="email-preheader">Du hast angefangen. Jetzt geht es ums Durchhalten - und Wachsen.</div>
+        <div class="email-body">Hallo [Vorname],
+
+du hast in den letzten 90 Tagen einiges gelernt. Jetzt ist es Zeit fur den nachsten Schritt...</div>
+        <div class="lock-overlay">
+          <div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="lock-text">Email 10 von 10</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="attribution">
+    <span>quirion Email Flows &mdash; powered by beatvest</span>
+    <span>v1 &middot; Marz 2026</span>
+  </div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+// ---- Mode Toggle ----
+document.getElementById('modeToggle').addEventListener('click', function() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-mode');
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-mode', next);
+  try { localStorage.setItem('qef-mode', next); } catch(e) {}
+});
+
+// ---- Tab Switching ----
+const tabs = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.flow-section');
+
+tabs.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const type = btn.getAttribute('data-type');
+
+    tabs.forEach(function(t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+
+    sections.forEach(function(s) { s.classList.remove('active'); });
+    const target = document.getElementById('flow-' + type);
+    if (target) target.classList.add('active');
+
+    // Smooth scroll to tabs
+    document.querySelector('.tabs-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ---- Copy to Clipboard ----
+document.querySelectorAll('.copy-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const emailId = btn.getAttribute('data-email');
+    const el = document.getElementById(emailId);
+    if (!el) return;
+
+    const text = el.textContent.trim();
+    navigator.clipboard.writeText(text).then(function() {
+      const orig = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg> Kopiert!';
+      setTimeout(function() {
+        btn.classList.remove('copied');
+        btn.innerHTML = orig;
+      }, 2000);
+    }).catch(function() {
+      // Fallback: select text
+      const range = document.createRange();
+      range.selectNode(el);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    });
+  });
+});
+</script>
+
+</body>
+</html>
