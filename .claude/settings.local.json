@@ -22,7 +22,12 @@
       "Bash(cp -r /Users/juliakruslin/bank-austria-kurs/src /Users/juliakruslin/unicredit/ && cp -r /Users/juliakruslin/bank-austria-kurs/public /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
       "Bash(cp -rf /Users/juliakruslin/bank-austria-kurs/src /Users/juliakruslin/unicredit/ && cp -rf /Users/juliakruslin/bank-austria-kurs/public /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
       "Bash(rsync -a /Users/juliakruslin/bank-austria-kurs/src/ /Users/juliakruslin/unicredit/src/ && rsync -a /Users/juliakruslin/bank-austria-kurs/public/ /Users/juliakruslin/unicredit/public/ && rsync -a /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
-      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nAdd bank-austria-kurs as base for UniCredit project\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nAdd bank-austria-kurs as base for UniCredit project\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(open http://localhost:5179)",
+      "Skill(claude-developer-platform)",
+      "Bash(npm install @anthropic-ai/sdk)",
+      "Bash(git add -A && git status)",
+      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nRebrand to UniCredit, add compliance agent and password gate\n\n- Replace all Bank Austria/quirion references with UniCredit\n- Update logos and URLs to unicredit.com\n- Add compliance checker agent \\(WpHG rules\\)\n- Add password-protected landing page \\(hvb-beatvest-wealth\\)\n- Add CLAUDE.md with project context\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }

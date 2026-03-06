@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "compliance": "node check-compliance.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

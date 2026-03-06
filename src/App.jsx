@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const Q = {
-  // Bank Austria teal (primary CTA, active nav, chevrons)
+  // UniCredit teal (primary CTA, active nav, chevrons)
   electricBlue: "#007A87", electricBlueHover: "#006370", electricBlueLight: "#E0F3F5",
   // Text
   deepBlue: "#1a1a1a", deepBlue70: "rgba(26,26,26,0.7)", deepBlue30: "rgba(26,26,26,0.3)",
@@ -10,7 +10,7 @@ const Q = {
   navyCard: "#1a1a1a",       // dark secondary button
   cyan: "#007A87",           // same teal
   cyanLight: "#E0F3F5",
-  red: "#E2001A",            // Bank Austria red (logo)
+  red: "#E2001A",            // UniCredit red (logo)
   slateCard: "#8AAAB8",      // muted blue-gray feature card bg
   neutralDark: "#888888", neutralMid: "#aaaaaa", white: "#ffffff",
   pageBg: "#ffffff",
@@ -22,24 +22,24 @@ const Q = {
 };
 
 // ─── DEEP LINK CONFIGURATION ───
-// B2B-Partner (z.B. Bank Austria) trägt hier die App-URLs ein.
+// B2B-Partner (z.B. UniCredit) trägt hier die App-URLs ein.
 // Diese führen Nutzer direkt an die richtige Stelle in der App.
 const DEEP_LINKS = {
   openAccount: {
-    url: "https://banking.bankaustria.at/depot-eroeffnen", // ← Partner URL hier eintragen
+    url: "https://banking.unicredit.com/depot-eroeffnen", // ← Partner URL hier eintragen
     label: { de: "Jetzt Depot eröffnen", en: "Open depot now", it: "Apri deposito ora" },
     icon: "🏦",
     screen: { de: "Depot eröffnen", en: "Open depot", it: "Apri deposito" },
     screenSub: { de: "Wertpapierdepot", en: "Securities account", it: "Deposito titoli" },
     hint: {
-      de: "Du hast gerade alles gelernt, was du brauchst. Jetzt kannst du dein Depot direkt in der Bank Austria App eröffnen.",
-      en: "You've just learned everything you need. Now you can open your depot directly in the Bank Austria app.",
-      it: "Hai appena imparato tutto ciò di cui hai bisogno. Ora puoi aprire il tuo deposito direttamente nell'app Bank Austria.",
+      de: "Du hast gerade alles gelernt, was du brauchst. Jetzt kannst du dein Depot direkt in der UniCredit App eröffnen.",
+      en: "You've just learned everything you need. Now you can open your depot directly in the UniCredit app.",
+      it: "Hai appena imparato tutto ciò di cui hai bisogno. Ora puoi aprire il tuo deposito direttamente nell'app UniCredit.",
     },
     cta: { de: "Depot jetzt eröffnen →", en: "Open depot now →", it: "Apri deposito ora →" },
   },
   firstInvestment: {
-    url: "https://banking.bankaustria.at/etf-kaufen", // ← Partner URL hier eintragen
+    url: "https://banking.unicredit.com/etf-kaufen", // ← Partner URL hier eintragen
     label: { de: "Jetzt ersten ETF kaufen", en: "Buy first ETF now", it: "Acquista primo ETF ora" },
     icon: "📈",
     screen: { de: "Wertpapiere kaufen", en: "Buy securities", it: "Acquista titoli" },
@@ -72,12 +72,12 @@ const S = {
     courseCompleteDesc: "Du hast alle Level durchgearbeitet. Du verstehst jetzt, wie dein Geld für dich arbeitet und weißt, was du tust.",
     courseCompleteBullets: [
       "Du weißt, warum Nicht-Investieren keine Option ist",
-      "Du hast dein Bank Austria Profil mit echtem Verständnis befüllt",
+      "Du hast dein UniCredit Profil mit echtem Verständnis befüllt",
       "Du kennst dein Portfolio in- und auswendig",
       "Dein Geld arbeitet ab sofort für dich",
     ],
     moduleCreating: "Modul wird erstellt...",
-    bankAustriaKurs: "Bank Austria Kurs",
+    unicreditKurs: "UniCredit Kurs",
     levelCompleted: "abgeschlossen",
     levelX: "Level",
     beforeStart: "Bevor wir starten.",
@@ -145,12 +145,12 @@ const S = {
     courseCompleteDesc: "You have completed all levels. You now understand how your money works for you and know what you're doing.",
     courseCompleteBullets: [
       "You know why not investing is not an option",
-      "You have set up your Bank Austria profile with real understanding",
+      "You have set up your UniCredit profile with real understanding",
       "You know your portfolio inside and out",
       "Your money is now working for you",
     ],
     moduleCreating: "Module is being created...",
-    bankAustriaKurs: "Bank Austria Course",
+    unicreditKurs: "UniCredit Course",
     levelCompleted: "completed",
     levelX: "Level",
     beforeStart: "Before we start.",
@@ -218,12 +218,12 @@ const S = {
     courseCompleteDesc: "Hai completato tutti i livelli. Ora capisci come il tuo denaro lavora per te e sai cosa stai facendo.",
     courseCompleteBullets: [
       "Sai perché non investire non è un'opzione",
-      "Hai completato il tuo profilo Bank Austria con vera comprensione",
+      "Hai completato il tuo profilo UniCredit con vera comprensione",
       "Conosci il tuo portafoglio dentro e fuori",
       "Il tuo denaro lavora per te da adesso",
     ],
     moduleCreating: "Il modulo è in fase di creazione...",
-    bankAustriaKurs: "Corso Bank Austria",
+    unicreditKurs: "Corso UniCredit",
     levelCompleted: "completato",
     levelX: "Livello",
     beforeStart: "Prima di iniziare.",
@@ -507,18 +507,18 @@ function DoneBtn({ onClick, lang }) {
 function DeepLinkModal({ deepLinkKey, lang, onClose }) {
   const dl = DEEP_LINKS[deepLinkKey];
   const ui = {
-    de: { badge: "Beatvest Kurs → Bank Austria App", context: "Du hast gerade alles Wichtige gelernt.", landing: "Hier wärst du in der Bank Austria App gelandet:", back: "← Zurück zum Kurs", partnerLabel: "Enterprise Partner Konfiguration", partnerNote: "Dieser Deep Link wird vom Enterprise Partner konfiguriert und führt Nutzer direkt an die passende Stelle in der App.", mockItems: ["Depot auswählen", "Betrag eingeben", "Auftrag bestätigen"] },
-    en: { badge: "Beatvest Course → Bank Austria App", context: "You've just learned everything important.", landing: "This is where you'd land in the Bank Austria app:", back: "← Back to course", partnerLabel: "Enterprise Partner Configuration", partnerNote: "This deep link is configured by the enterprise partner and takes users directly to the right place in the app.", mockItems: ["Select depot", "Enter amount", "Confirm order"] },
-    it: { badge: "Corso Beatvest → App Bank Austria", context: "Hai appena imparato tutto l'essenziale.", landing: "Qui saresti atterrato nell'app Bank Austria:", back: "← Torna al corso", partnerLabel: "Configurazione Enterprise Partner", partnerNote: "Questo deep link è configurato dal partner enterprise e porta gli utenti direttamente al posto giusto nell'app.", mockItems: ["Seleziona deposito", "Inserisci importo", "Conferma ordine"] },
+    de: { badge: "Beatvest Kurs → UniCredit App", context: "Du hast gerade alles Wichtige gelernt.", landing: "Hier wärst du in der UniCredit App gelandet:", back: "← Zurück zum Kurs", partnerLabel: "Enterprise Partner Konfiguration", partnerNote: "Dieser Deep Link wird vom Enterprise Partner konfiguriert und führt Nutzer direkt an die passende Stelle in der App.", mockItems: ["Depot auswählen", "Betrag eingeben", "Auftrag bestätigen"] },
+    en: { badge: "Beatvest Course → UniCredit App", context: "You've just learned everything important.", landing: "This is where you'd land in the UniCredit app:", back: "← Back to course", partnerLabel: "Enterprise Partner Configuration", partnerNote: "This deep link is configured by the enterprise partner and takes users directly to the right place in the app.", mockItems: ["Select depot", "Enter amount", "Confirm order"] },
+    it: { badge: "Corso Beatvest → App UniCredit", context: "Hai appena imparato tutto l'essenziale.", landing: "Qui saresti atterrato nell'app UniCredit:", back: "← Torna al corso", partnerLabel: "Configurazione Enterprise Partner", partnerNote: "Questo deep link è configurato dal partner enterprise e porta gli utenti direttamente al posto giusto nell'app.", mockItems: ["Seleziona deposito", "Inserisci importo", "Conferma ordine"] },
   }[lang] || { badge:"", context:"", landing:"", back:"Back", partnerLabel:"", partnerNote:"", mockItems:[] };
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 300, background: Q.pageBg, fontFamily: Q.font, overflowY: "auto" }}>
 
-      {/* ── Simulated Bank Austria header ── */}
+      {/* ── Simulated UniCredit header ── */}
       <div style={{ background: Q.white, borderBottom: `1px solid ${Q.divider}`, padding: "52px 20px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 24, color: Q.deepBlue, padding: "2px 6px", lineHeight: 1 }}>‹</button>
-        <img src="/bank-austria-logo.png" alt="Bank Austria" style={{ height: 26, width: "auto" }} />
+        <img src="/unicredit-logo.png" alt="UniCredit" style={{ height: 26, width: "auto" }} />
         <div style={{ width: 36 }} />
       </div>
 
@@ -539,7 +539,7 @@ function DeepLinkModal({ deepLinkKey, lang, onClose }) {
             <span style={{ fontSize: 11, fontWeight: 600, color: Q.deepBlue }}>9:41</span>
             <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
               <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#E2001A" }} />
-              <span style={{ fontSize: 10, fontWeight: 700, color: Q.deepBlue }}>Bank Austria</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: Q.deepBlue }}>UniCredit</span>
             </div>
             <span style={{ fontSize: 11, color: Q.neutralDark }}>●●●</span>
           </div>
@@ -599,14 +599,14 @@ function DeepLinkModal({ deepLinkKey, lang, onClose }) {
 
 // ─── ACTION BUTTON ───
 // variant="pill"  → inline in Modulen (teal pill)
-// variant="card"  → am Level-Abschluss (dunkle Navy-Karte mit Bank-Austria-Branding)
+// variant="card"  → am Level-Abschluss (dunkle Navy-Karte mit UniCredit-Branding)
 function ActionBtn({ deepLinkKey, lang, variant = "pill" }) {
   const [open, setOpen] = useState(false);
   const dl = DEEP_LINKS[deepLinkKey];
   const cardLabel = {
-    de: "Direkt in der Bank Austria App",
-    en: "Directly in the Bank Austria App",
-    it: "Direttamente nell'app Bank Austria",
+    de: "Direkt in der UniCredit App",
+    en: "Directly in the UniCredit App",
+    it: "Direttamente nell'app UniCredit",
   }[lang];
 
   return (
@@ -633,7 +633,7 @@ function ActionBtn({ deepLinkKey, lang, variant = "pill" }) {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <div style={{ background: "#fff", borderRadius: 6, padding: "3px 8px", display: "inline-flex", alignItems: "center" }}>
-                <img src="/bank-austria-logo.png" alt="Bank Austria" style={{ height: 16, width: "auto" }} />
+                <img src="/unicredit-logo.png" alt="UniCredit" style={{ height: 16, width: "auto" }} />
               </div>
               <span style={{ fontSize: 10, fontWeight: 700, color: Q.cyan, textTransform: "uppercase", letterSpacing: 1 }}>{cardLabel}</span>
             </div>
@@ -1600,21 +1600,21 @@ function EtfkostenMod({ onDone, lang }) {
       title: "Hier lernst du, welche Gebühren du für deine ETFs zahlst",
       p1: "Auch ETFs haben Kosten: die TER (Total Expense Ratio). Diese liegt jährlich zwischen 0,1% und 0,4% – deutlich weniger als Fonds mit 1,5–2%.",
       p2: "Beispiel: 200€/Monat über 30 Jahre. ETF mit 0,1% Kosten: ~270.000€. Fonds mit 2% Kosten: ~190.000€. Du hast 80.000€ verschenkt.",
-      p3: "Hinweis: Bank Austria bietet eigene Fonds- und ETF-Produkte an – vergleiche immer die TER.",
+      p3: "Hinweis: UniCredit bietet eigene Fonds- und ETF-Produkte an – vergleiche immer die TER.",
       merke: "Die TER ist die jährliche Gebühr deines ETFs. Auch kleine Unterschiede machen über 30 Jahre einen enormen Unterschied.",
     },
     en: {
       title: "Here you'll learn what fees you pay for your ETFs",
       p1: "ETFs also have costs: the TER (Total Expense Ratio). This is between 0.1% and 0.4% per year – significantly less than funds with 1.5–2%.",
       p2: "Example: €200/month over 30 years. ETF with 0.1% costs: ~€270,000. Fund with 2% costs: ~€190,000. You've given away €80,000.",
-      p3: "Note: Bank Austria offers its own fund and ETF products – always compare the TER.",
+      p3: "Note: UniCredit offers its own fund and ETF products – always compare the TER.",
       merke: "The TER is the annual fee of your ETF. Even small differences make an enormous difference over 30 years.",
     },
     it: {
       title: "Qui impari quali commissioni paghi per i tuoi ETF",
       p1: "Anche gli ETF hanno costi: il TER (Total Expense Ratio). Questo è tra lo 0,1% e lo 0,4% annuo – significativamente meno dei fondi con l'1,5–2%.",
       p2: "Esempio: 200€/mese su 30 anni. ETF con costi dello 0,1%: ~270.000€. Fondo con costi del 2%: ~190.000€. Hai regalato 80.000€.",
-      p3: "Nota: Bank Austria offre i propri prodotti fondi ed ETF – confronta sempre il TER.",
+      p3: "Nota: UniCredit offre i propri prodotti fondi ed ETF – confronta sempre il TER.",
       merke: "Il TER è la commissione annuale del tuo ETF. Anche piccole differenze fanno una differenza enorme su 30 anni.",
     },
   }[lang];
@@ -2555,7 +2555,7 @@ function MotivationOverlay({ onComplete, lang, onLangChange }) {
     <div style={{ position: "fixed", inset: 0, zIndex: 200, background: Q.pageBg, fontFamily: Q.font, overflowY: "auto" }}>
       <div style={{ position: "sticky", top: 0, background: Q.white, borderBottom: `1px solid ${Q.divider}`, padding: "14px 24px 10px", zIndex: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-          <img src="/bank-austria-logo.png" alt="Bank Austria" style={{ height: 24, width: "auto" }} />
+          <img src="/unicredit-logo.png" alt="UniCredit" style={{ height: 24, width: "auto" }} />
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <LangSwitcher lang={lang} setLang={onLangChange} />
             {step !== "goal" && (
@@ -2671,15 +2671,15 @@ function LevelCompleteView({ completedLevel, nextLevel, onStartNextLevel, onGoHo
   );
 }
 
-// ─── BANK AUSTRIA LOGO ───
+// ─── UNICREDIT LOGO ───
 function QIcon({ size }) {
-  return <img src="/bank-austria-logo.png" alt="Bank Austria" style={{ height: size || 20, width: "auto" }} />;
+  return <img src="/unicredit-logo.png" alt="UniCredit" style={{ height: size || 20, width: "auto" }} />;
 }
 
 // ═══════════════════════════════════════
 // ─── MAIN APP ───
 // ═══════════════════════════════════════
-export default function BankAustriaKurs() {
+export default function UniCreditKurs() {
   const [lang, setLang] = useState("de");
   const [view, setView] = useState("home");
   const [levelIdx, setLevelIdx] = useState(0);
@@ -2867,7 +2867,7 @@ export default function BankAustriaKurs() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <LangSwitcher lang={lang} setLang={setLang} />
-            <img src="/bank-austria-logo.png" alt="Bank Austria" style={{ height: 28, width: "auto" }} />
+            <img src="/unicredit-logo.png" alt="UniCredit" style={{ height: 28, width: "auto" }} />
           </div>
         </div>
       </div>
@@ -2877,21 +2877,21 @@ export default function BankAustriaKurs() {
         {/* ── Feature card (slate blue-gray) ── */}
         <div style={{ borderRadius: "18px", background: Q.slateCard, padding: "24px 24px 20px", marginTop: 20, marginBottom: 6, overflow: "hidden", position: "relative" }}>
           <div style={{ position: "relative", zIndex: 1 }}>
-            <div style={{ fontWeight: 700, fontSize: 22, color: "#fff", lineHeight: 1.2, marginBottom: 6, whiteSpace: "pre-line" }}>{s.headline}</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", marginBottom: 20 }}>{s.subhead}</div>
+            <div style={{ fontWeight: 700, fontSize: 22, color: "#000", lineHeight: 1.2, marginBottom: 6, whiteSpace: "pre-line" }}>{s.headline}</div>
+            <div style={{ fontSize: 12, color: "rgba(0,0,0,0.6)", marginBottom: 20 }}>{s.subhead}</div>
             <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
               {[{ l: s.streak, v: streak, icon: "🔥" }, { l: s.points, v: pts, icon: "⭐" }, { l: s.modules, v: `${doneCount}/${total}`, icon: "📚" }].map((st, i) => (
                 <div key={i} style={{ flex: 1, textAlign: "center" }}>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>{st.v}</div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.65)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 0.4 }}>{st.l}</div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#000" }}>{st.v}</div>
+                  <div style={{ fontSize: 10, color: "rgba(0,0,0,0.5)", fontWeight: 500, textTransform: "uppercase", letterSpacing: 0.4 }}>{st.l}</div>
                 </div>
               ))}
             </div>
-            <div style={{ height: 4, background: "rgba(255,255,255,0.25)", borderRadius: 100, overflow: "hidden" }}>
-              <div style={{ height: "100%", background: "#fff", borderRadius: 100, transition: "width .5s", width: `${progress}%` }} />
+            <div style={{ height: 4, background: "rgba(0,0,0,0.15)", borderRadius: 100, overflow: "hidden" }}>
+              <div style={{ height: "100%", background: "#000", borderRadius: 100, transition: "width .5s", width: `${progress}%` }} />
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 600 }}>{Math.round(progress)}% {s.progress}</span>
+              <span style={{ fontSize: 11, color: "rgba(0,0,0,0.5)", fontWeight: 600 }}>{Math.round(progress)}% {s.progress}</span>
             </div>
           </div>
         </div>
