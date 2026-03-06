@@ -27,7 +27,9 @@
       "Skill(claude-developer-platform)",
       "Bash(npm install @anthropic-ai/sdk)",
       "Bash(git add -A && git status)",
-      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nRebrand to UniCredit, add compliance agent and password gate\n\n- Replace all Bank Austria/quirion references with UniCredit\n- Update logos and URLs to unicredit.com\n- Add compliance checker agent \\(WpHG rules\\)\n- Add password-protected landing page \\(hvb-beatvest-wealth\\)\n- Add CLAUDE.md with project context\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nRebrand to UniCredit, add compliance agent and password gate\n\n- Replace all Bank Austria/quirion references with UniCredit\n- Update logos and URLs to unicredit.com\n- Add compliance checker agent \\(WpHG rules\\)\n- Add password-protected landing page \\(hvb-beatvest-wealth\\)\n- Add CLAUDE.md with project context\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push origin main)",
+      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nFix Netlify deployment – add SPA redirects and build config\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\" && git push origin main)"
     ]
   }
 }
