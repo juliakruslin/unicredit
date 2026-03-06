@@ -13,7 +13,16 @@
       "Bash(lsof -i :5173 | head -3)",
       "Bash(npx vite build 2>&1 | tail -20)",
       "Bash(git init && git add src/App.jsx index.html package.json package-lock.json vite.config.js public/)",
-      "Bash(git init && git add . && git commit -m \"$\\(cat <<'EOF'\nInitial commit: quirion Kurs v1\n\nComplete interactive learning app with 5 levels, motivation overlay,\ninteractive modules \\(ETF, Gleitpfad, Budget, Benchmark, Horizon\\),\nlevel completion flow, and production build.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git init && git add . && git commit -m \"$\\(cat <<'EOF'\nInitial commit: quirion Kurs v1\n\nComplete interactive learning app with 5 levels, motivation overlay,\ninteractive modules \\(ETF, Gleitpfad, Budget, Benchmark, Horizon\\),\nlevel completion flow, and production build.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm install && npm run dev)",
+      "Bash(open http://localhost:5178)",
+      "Bash(git -C /Users/juliakruslin/bank-austria-kurs remote -v 2>/dev/null)",
+      "Bash(open https://github.com/juliakruslin/bank-austria)",
+      "Bash(open http://localhost:5173)",
+      "Bash(cp -r /Users/juliakruslin/bank-austria-kurs/src /Users/juliakruslin/unicredit/ && cp -r /Users/juliakruslin/bank-austria-kurs/public /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && cp /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
+      "Bash(cp -rf /Users/juliakruslin/bank-austria-kurs/src /Users/juliakruslin/unicredit/ && cp -rf /Users/juliakruslin/bank-austria-kurs/public /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && cp -f /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
+      "Bash(rsync -a /Users/juliakruslin/bank-austria-kurs/src/ /Users/juliakruslin/unicredit/src/ && rsync -a /Users/juliakruslin/bank-austria-kurs/public/ /Users/juliakruslin/unicredit/public/ && rsync -a /Users/juliakruslin/bank-austria-kurs/index.html /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/package.json /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/vite.config.js /Users/juliakruslin/unicredit/ && rsync -a /Users/juliakruslin/bank-austria-kurs/package-lock.json /Users/juliakruslin/unicredit/)",
+      "Bash(git add -A && git commit -m \"$\\(cat <<'EOF'\nAdd bank-austria-kurs as base for UniCredit project\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
